@@ -158,6 +158,22 @@ const MainContent = (
                 <div
                   key={index}
                   className="bg-gray-700 p-4 rounded-md mb-4 hover:bg-gray-600"
+                  onClick={async () => {
+                    const res = await fetch(appURL + "/api/tweet/search", {
+                      method: "POST",
+                      headers: {
+                        "Content-Type": "application/json",
+                      },
+                      body: JSON.stringify({
+                        query: trend.keyword,
+                        limit: 25,
+                      }),
+                    });
+                    const data = await res.json();
+                    setSearchResult(data.data);
+                    setSearchPage("search");
+                    setSearchWord(trend.keyword);
+                  }}
                 >
                   <div className="py-2">
                     <div className="flex items-center justify-between">
