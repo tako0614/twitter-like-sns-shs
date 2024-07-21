@@ -1,5 +1,5 @@
 import { useState } from "react";
-
+import CommentButton from "./CommentButton";
 type PostProps = {
   username: string;
   time: string;
@@ -8,10 +8,11 @@ type PostProps = {
   like: number;
   comment: number;
   appURL: string;
+  setPage: (page: string) => void;
 };
 
 const Post = (
-  { username, time, content, id, like, comment, appURL }: PostProps,
+  { username, time, content, id, like, comment, appURL, setPage }: PostProps,
 ) => {
   const [isLiked, setIsLiked] = useState(false);
   const [likedCount, setLikedCount] = useState(like);
@@ -22,13 +23,13 @@ const Post = (
       </div>
       <p className="mt-2">{content}</p>
       <div className="flex items-center justify-start space-x-4 mt-4">
-        <button
-          className="flex items-center space-x-2 text-gray-400 hover:text-blue-500"
-          onClick={() => {}}
+        <CommentButton
+          comment={comment}
+          appURL={appURL}
+          userName={username}
+          id={id}
         >
-          <span>💬</span>
-          <span>{comment}</span>
-        </button>
+        </CommentButton>
         <button
           className="flex items-center space-x-2 text-gray-400 hover:text-red-500"
           onClick={async () => {

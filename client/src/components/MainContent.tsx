@@ -71,6 +71,7 @@ const MainContent = (
                 like={post.like}
                 comment={post.comment}
                 appURL={appURL}
+                setPage={setPage}
               />
             ))}
           </div>

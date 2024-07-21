@@ -37,7 +37,7 @@ app.post("/api/tweet/get", async (c) => {
       skip: {},
     };
   }
-  const tweets = await Tweet.find().skip(data.skip);
+  const tweets = await Tweet.find({ type: { $ne: "comment" } }).skip(data.skip);
   console.log(tweets.length);
   const timeline = generateTimeline(tweets, data.limit);
   const result = {
@@ -64,7 +64,7 @@ app.post("/api/tweet/post", async (c) => {
   if (userName.length === 0 || userName.length > 20) {
     return c.json({ error: "Invalid username" });
   }
-  if (type === "coment") {
+  if (type === "comment") {
     const isTweetExist = await Tweet.findOne({ _id: data.comentedTweet });
     if (!isTweetExist) {
       return c.json({ error: "Tweet does not exist" });
@@ -75,7 +75,7 @@ app.post("/api/tweet/post", async (c) => {
       comentedTweet: data.comentedTweet,
       userName,
     });
-    await Tweet.updateOne({ _id: data.comentedTweet }, { $push: result._id });
+    await Tweet.updateOne({ _id: data.comentedTweet }, { $push: { comments: result._id } });
     return c.json({ status: true } as { status: boolean });
   }
   if (type === "tweet") {
