@@ -75,7 +75,9 @@ app.post("/api/tweet/post", async (c) => {
       comentedTweet: data.comentedTweet,
       userName,
     });
-    await Tweet.updateOne({ _id: data.comentedTweet }, { $push: { comments: result._id } });
+    await Tweet.updateOne({ _id: data.comentedTweet }, {
+      $push: { comments: result._id },
+    });
     return c.json({ status: true } as { status: boolean });
   }
   if (type === "tweet") {
@@ -101,6 +103,7 @@ app.post("/api/tweet/like", async (c) => {
 app.post("/api/tweet/getComments", async (c) => {
   const data = await c.req.json();
   const { id } = data;
+  console.log(id);
   const tweet = await Tweet.findOne({ _id: id });
   if (!tweet) {
     return c.json({ error: "Tweet does not exist" });
@@ -110,7 +113,66 @@ app.post("/api/tweet/getComments", async (c) => {
     const comment = await Tweet.findOne({ _id: commentId });
     return comment;
   }));
-  generateTimeline(comenntsData);
-  return c.json({ status: true });
+  const result = generateTimeline(comenntsData);
+  return c.json({ status: true, data: result });
 });
 Deno.serve(app.fetch);
+
+
+
+interface Post {
+  text: string;
+  likes: number;
+  comments: string[];
+  timestamp: string | number | Date;
+}
+
+// キーワード頻度計算
+function calculateKeywordFrequency(posts: Post[]): { [key: string]: number } {
+  const keywordFrequency: { [key: string]: number } = {};
+
+  posts.forEach((post) => {
+    const words = post.text.split(/\s+/);
+    words.forEach((word) => {
+      if (keywordFrequency[word]) {
+        keywordFrequency[word]++;
+      } else {
+        keywordFrequency[word] = 1;
+      }
+    });
+  });
+
+  return keywordFrequency;
+}
+
+// トレンド計算
+function calculateTrends(posts: Post[], limit: number = 10): { keyword: string, score: number }[] {
+  const keywordFrequency = calculateKeywordFrequency(posts);
+
+  // トレンドスコアを計算
+  const trends = Object.entries(keywordFrequency).map(([keyword, frequency]) => ({
+    keyword,
+    score: frequency,
+  }));
+
+  // スコアに基づいてソートし、制限数までのトレンドを返す
+  return trends.sort((a, b) => b.score - a.score).slice(0, limit);
+}
+
+// トレンドAPIエンドポイント
+app.post("/api/trends", async (c) => {
+  let data: { limit?: number };
+  try {
+    data = await c.req.json();
+  } catch {
+    data = {};
+  }
+
+  // 最新の100件の投稿を取得
+  const posts = await Tweet.find().sort({ timestamp: -1 }).limit(100).exec();
+
+  // トレンドを計算
+  const trends = calculateTrends(posts, data.limit || 10);
+
+  return c.json({ status: true, data: trends });
+});

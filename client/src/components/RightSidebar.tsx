@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import TrendingTopic from "./TrendingTopic.tsx";
 
 const RightSidebar = () => {
@@ -9,7 +11,7 @@ const RightSidebar = () => {
   ];
 
   return (
-    <div className="w-[400px] h-screen bg-gray-900 text-white p-4 flex flex-col">
+    <div className="w-[450px] h-screen bg-gray-900 text-white p-4 flex flex-col">
       <div className="mt-4  flex-1">
         <div className="bg-gray-800 p-4 rounded-md">
           <h2 className="text-xl mb-2">今はどうしてる？</h2>

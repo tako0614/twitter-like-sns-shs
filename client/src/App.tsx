@@ -9,6 +9,8 @@ function App() {
   const [posts, setPosts] = useState([]);
   const [userName, setUserName] = useState("");
   const [page, setPage] = useState("home");
+  const [comment, setComment] = useState([]);
+  const [selectPost, setSelectPost] = useState("");
   useEffect(() => {
     async function fetchData() {
       const res = await fetch(`${appURL}/api/tweet/get`, {
@@ -28,7 +30,7 @@ function App() {
       <div>
       </div>
       <div className="flex">
-        <Sidebar setUserName={setUserName} />
+        <Sidebar setUserName={setUserName} setPage={setPage} />
         <MainContent
           posts={posts}
           setPosts={setPosts}
@@ -36,6 +38,10 @@ function App() {
           appURL={appURL}
           page={page}
           setPage={setPage}
+          commentPost={comment}
+          setCommentPost={setComment}
+          selectPost={selectPost}
+          setSelectPost={setSelectPost}
         />
         <RightSidebar />
       </div>

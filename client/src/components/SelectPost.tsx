@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CommentButton from "./CommentButton";
 type PostProps = {
   postInfo: {
@@ -20,38 +20,38 @@ type PostProps = {
 const Post = (
   { postInfo, appURL, setPage, setCommentPost, setSelectPost }: PostProps,
 ) => {
+  if (!postInfo) return <></>;
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   const [isLiked, setIsLiked] = useState(false);
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   const [likedCount, setLikedCount] = useState(postInfo.like);
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  useEffect(() => {
+    if (postInfo) {
+      setLikedCount(postInfo.like);
+    }
+  }, [postInfo, postInfo.like]);
   return (
-    <div className="bg-gray-700 p-4 rounded-md mb-4 hover:bg-gray-600">
-      <div
-        onClick={async () => {
-          const res = await fetch(
-            "http://localhost:8000/api/tweet/getComments",
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                id: postInfo.id,
-              }),
-            },
-          );
-          const data = await res.json();
-          setCommentPost(data.data);
-          setPage("comment");
-          setSelectPost(postInfo);
-        }}
-        className="py-2"
-      >
-        <div className="flex items-center justify-between">
-          <span className="text-sm text-gray-400">
-            {postInfo.username} {postInfo.time}
-          </span>
-        </div>
-        <p className="mt-2">{postInfo.content}</p>
+    <div className="bg-gray-700 p-4 rounded-md mb-4">
+      {/*戻るボタン */}
+      <div className="flex w-full pb-2">
+        <button
+          className="text-white text-xl font-semibold"
+          onClick={() => {
+            setPage("home");
+            setCommentPost([]);
+            setSelectPost(null);
+          }}
+        >
+          {"< 戻る"}
+        </button>
       </div>
+      <div className="flex items-center justify-between">
+        <span className="text-sm text-gray-400">
+          {postInfo.username} {postInfo.time}
+        </span>
+      </div>
+      <p className="mt-2">{postInfo.content}</p>
       <div className="flex items-center justify-start space-x-4 mt-4">
         <CommentButton
           comment={postInfo.comment}

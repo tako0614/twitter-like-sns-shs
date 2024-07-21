@@ -1,4 +1,6 @@
-import { useState } from "react";
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { useEffect, useState } from "react";
 function Login(
   { comment, appURL, userName, id }: {
     comment: number;
@@ -10,6 +12,9 @@ function Login(
   const [showWindow, setShowWindow] = useState(false);
   const [newPostContent, setNewPostContent] = useState("");
   const [commentCount, setCommentCount] = useState(comment);
+  useEffect(() => {
+    setCommentCount(comment);
+  }, [comment]);
   if (showWindow === false) {
     return (
       <>

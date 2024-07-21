@@ -24,4 +24,30 @@ async function getTweets() {
   const data = await res.json();
   console.log(data);
 }
-getTweets();
+async function getComments() {
+  const res = await fetch("http://localhost:8000/api/tweet/getComments", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      id: "669cd6da7063d722d1a6fdaf",
+    }),
+  });
+  const data = await res.json();
+  console.log(data);
+}
+async function getTrend() {
+  const res = await fetch("http://localhost:8000/api/trends", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      limit: 10,
+    }),
+  });
+  const data = await res.json();
+  console.log(data);
+}
+getTrend()
