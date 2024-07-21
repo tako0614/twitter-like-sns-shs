@@ -1,7 +1,8 @@
 import { useState } from "react";
-function Login({ comment,appURL, userName,id }: { comment: number,appURL: string, userName: string,id: string }) {
+function Login({ comment,appURL, userName,id, }: { comment: number,appURL: string, userName: string,id: string }) {
   const [showWindow, setShowWindow] = useState(false);
   const [newPostContent, setNewPostContent] = useState("");
+  const [commentCount, setCommentCount] = useState(comment);
   if (showWindow === false) {
     return (
       <>
@@ -12,7 +13,7 @@ function Login({ comment,appURL, userName,id }: { comment: number,appURL: string
           }}
         >
           <span>💬</span>
-          <span>{comment}</span>
+          <span>{commentCount}</span>
         </button>
       </>
     );
@@ -47,6 +48,7 @@ function Login({ comment,appURL, userName,id }: { comment: number,appURL: string
                   comentedTweet: id,
                 }),
               });
+                setCommentCount(commentCount + 1);
             }}
           >
             <div className="text-sm">
@@ -80,7 +82,7 @@ function Login({ comment,appURL, userName,id }: { comment: number,appURL: string
         onClick={() => {}}
       >
         <span>💬</span>
-        <span>{comment}</span>
+        <span>{commentCount}</span>
       </button>
     </>
   );

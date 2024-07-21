@@ -14,6 +14,7 @@ const Post = (
   { username, time, content, id, like, comment, appURL }: PostProps,
 ) => {
   const [isLiked, setIsLiked] = useState(false);
+  const [likedCount, setLikedCount] = useState(like);
   return (
     <div className="bg-gray-700 p-4 rounded-md mb-4">
       <div className="flex items-center justify-between">
@@ -45,11 +46,12 @@ const Post = (
               console.log(data);
               console.log(id);
               setIsLiked(true);
+              setLikedCount(likedCount + 1);
             }
           }}
         >
           <span>❤️</span>
-          <span>{like}</span>
+          <span>{likedCount}</span>
         </button>
       </div>
     </div>
