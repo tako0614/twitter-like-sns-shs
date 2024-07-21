@@ -7,7 +7,7 @@ const appURL = "http://localhost:8000";
 
 function App() {
   const [posts, setPosts] = useState([]);
-  const [userName, setUserName] = useState("");
+  const [userName, setUserName] = useState("匿名");
   const [page, setPage] = useState("home");
   const [comment, setComment] = useState([]);
   const [selectPost, setSelectPost] = useState("");

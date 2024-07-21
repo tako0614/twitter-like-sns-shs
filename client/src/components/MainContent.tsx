@@ -55,6 +55,10 @@ const MainContent = (
         alert("ユーザーネームを設定してください。");
         return;
       }
+      if(newPostContent.trim() === ""){
+        alert("何か入力してください");
+        return;
+      }
       await fetch(appURL + "/api/tweet/post", {
         method: "POST",
         headers: {
@@ -76,6 +80,7 @@ const MainContent = (
         .then((res) => res.json())
         .then((data) => setPosts(data.data));
       setNewPostContent("");
+      alert("ツイートしました");
     }
   };
   if (page === "home") {
@@ -218,6 +223,7 @@ const MainContent = (
             setCommentPost={setCommentPost}
             setPage={setPage}
             appURL={appURL}
+            commentPost={commentPost}
           />
           <div className="mb-4 bg-gray-700 p-4 rounded-md">
             <textarea
@@ -231,6 +237,10 @@ const MainContent = (
               onClick={async () => {
                 if (userName === "") {
                   alert("ユーザーネームを設定してください。");
+                  return;
+                }
+                if(newCommentContent.trim() === ""){
+                  alert("何か入力してください");
                   return;
                 }
                 await fetch(appURL + "/api/tweet/post", {
@@ -247,6 +257,17 @@ const MainContent = (
                 });
                 alert("返信しました");
                 setNewCommentContent("");
+                const res = await fetch(appURL + "/api/tweet/getComments", {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify({
+                    id: selectPost.id,
+                  }),
+                });
+                const data = await res.json();
+                setCommentPost(data.data);
               }}
             >
               返信

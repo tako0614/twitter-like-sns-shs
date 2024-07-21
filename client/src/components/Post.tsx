@@ -58,6 +58,7 @@ const Post = (
           appURL={appURL}
           userName={postInfo.username}
           id={postInfo.id}
+          isComment={false}
         >
         </CommentButton>
         <button

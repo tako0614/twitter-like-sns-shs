@@ -1,5 +1,6 @@
 import SetUserNameButton from "./SetUserNameButton.tsx";
 import TweetButton from "./TweetButton.tsx";
+import PostButton from "./PostButton.tsx";
 const Sidebar = (
   { setUserName, setPage }: {
     setUserName: React.Dispatch<React.SetStateAction<string>>;
@@ -34,11 +35,7 @@ const Sidebar = (
         <SetUserNameButton setUserName={setUserName}>
         </SetUserNameButton>
       </div>
-      <div className="flex items-center justify-center h-16 border-t border-gray-700">
-        <button className="bg-blue-500 px-4 py-2 rounded-full text-white">
-          ポストする
-        </button>
-      </div>
+      <PostButton />
     </div>
   );
 };

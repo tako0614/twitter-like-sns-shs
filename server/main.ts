@@ -38,7 +38,6 @@ app.post("/api/tweet/get", async (c) => {
     };
   }
   const tweets = await Tweet.find({ type: { $ne: "comment" } }).skip(data.skip);
-  console.log(tweets.length);
   const timeline = generateTimeline(tweets, data.limit);
   const result = {
     status: true,
@@ -103,7 +102,6 @@ app.post("/api/tweet/like", async (c) => {
 app.post("/api/tweet/getComments", async (c) => {
   const data = await c.req.json();
   const { id } = data;
-  console.log(id);
   const tweet = await Tweet.findOne({ _id: id });
   if (!tweet) {
     return c.json({ error: "Tweet does not exist" });
@@ -177,8 +175,8 @@ interface Post {
 // キーワード抽出とストップワードの除去
 function extractKeywords(text: string): string[] {
   const tokens = segmenter.segment(text);
-  const words = tokens.filter((word) =>
-    !stopwords.has(word) && word.length > 1
+  const words = tokens.filter((word: string | any[]) =>
+    typeof word === 'string' && !stopwords.has(word) && word.length > 1
   );
   return words;
 }

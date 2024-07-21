@@ -13,12 +13,13 @@ type PostProps = {
   };
   appURL: string;
   setPage: (page: string) => void;
-  setCommentPost: any;
   setSelectPost: any;
+  setCommentPost: any;
+  commentPost: any;
 };
 
 const Post = (
-  { postInfo, appURL, setPage, setCommentPost, setSelectPost }: PostProps,
+  { postInfo, appURL, setPage, setCommentPost, setSelectPost,commentPost }: PostProps,
 ) => {
   if (!postInfo) return <></>;
   // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -58,6 +59,9 @@ const Post = (
           appURL={appURL}
           userName={postInfo.username}
           id={postInfo.id}
+          isComment={true}
+          setCommentPost={setCommentPost}
+          commentPost={commentPost}
         >
         </CommentButton>
         <button

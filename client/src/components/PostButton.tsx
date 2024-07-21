@@ -1,47 +1,24 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, useState } from "react";
-function Login(
-  { comment, appURL, userName, id, isComment, setCommentPost, commentPost }: {
-    comment: number;
-    appURL: string;
-    userName: string;
-    id: string;
-    isComment: boolean;
-    setCommentPost?: any;
-    commentPost?: any;
-  },
-) {
+import { useState } from "react";
+function Login() {
   const [showWindow, setShowWindow] = useState(false);
   const [newPostContent, setNewPostContent] = useState("");
-  const [commentCount, setCommentCount] = useState(comment);
-  useEffect(() => {
-    setCommentCount(comment);
-  }, [comment]);
   if (showWindow === false) {
     return (
       <>
-        <button
-          className="flex items-center space-x-2 text-gray-400 hover:text-blue-500"
-          onClick={() => {
+        <div className="flex items-center justify-center h-16 border-t border-gray-700"
+        onClick={() => {
             setShowWindow(true);
           }}
         >
-          <span>💬</span>
-          <span>{commentCount}</span>
+        <button className="bg-blue-500 px-4 py-2 rounded-full text-white">
+          ポストする
         </button>
+      </div>
       </>
     );
   }
   return (
     <>
-      <button
-        className="flex items-center space-x-2 text-gray-400 hover:text-blue-500"
-        onClick={() => {}}
-      >
-        <span>💬</span>
-        <span>{commentCount}</span>
-      </button>
       <div className="fixed z-50 w-full h-full overflow-hidden bg-[rgba(75,92,108,0)] left-0 top-0 flex justify-center items-center p-5">
         <div className="bg-[rgba(255,255,255,0.7)] dark:bg-[rgba(24,24,24,0.7)] backdrop-blur border-inherit border-1 max-w-md max-h-[350px] w-full h-full rounded-xl shadow-lg relative p-5">
           <div className="absolute right-0 top-0 p-4">
@@ -58,40 +35,11 @@ function Login(
             className="h-full px-2 lg:px-3 flex flex-col"
             onSubmit={async (e) => {
               e.preventDefault();
-              await fetch(appURL + "/api/tweet/post", {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                  text: newPostContent,
-                  type: "comment",
-                  userName: userName,
-                  comentedTweet: id,
-                }),
-              });
-              setCommentCount(commentCount + 1);
-              alert("返信しました");
-              setNewPostContent("");
-              setShowWindow(false);
-              if(isComment) {
-                const res = await fetch(appURL + "/api/tweet/getComments", {
-                  method: "POST",
-                  headers: {
-                    "Content-Type": "application/json",
-                  },
-                  body: JSON.stringify({
-                    id: id,
-                  }),
-                });
-                const data = await res.json();
-                setCommentPost(data.data);
-              }
             }}
           >
             <div className="text-sm">
               <p className="text-black dark:text-white font-bold text-3xl mt-4 mb-5">
-                返信
+                ツイート
               </p>
             </div>
             <div className="flex flex-col">
@@ -109,11 +57,20 @@ function Login(
                 type="submit"
                 className="rounded-lg text-white bg-[#007AFF] ring-1 ring-[rgba(0,122,255,12%)] shadow-[0_1px_2.5px_rgba(0,122,255,24%)] px-5 py-2 hover:bg-[#1f7adb] focus:outline-none disabled:bg-gray-300 disabled:dark:bg-gray-700"
               >
-                {"返信"}
+                {"設定！"}
               </button>
             </div>
           </form>
         </div>
+      </div>
+      <div className="flex items-center justify-center h-16 border-t border-gray-700"
+        onClick={() => {
+            setShowWindow(true);
+          }}
+        >
+        <button className="bg-blue-500 px-4 py-2 rounded-full text-white">
+          ポストする
+        </button>
       </div>
     </>
   );
