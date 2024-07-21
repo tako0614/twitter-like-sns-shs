@@ -1,23 +1,19 @@
 import { useState } from "react";
-function Login(
-  { setUserName }: {
-    setUserName: React.Dispatch<React.SetStateAction<string>>;
-  },
-) {
+function Login({ comment,appURL, userName,id }: { comment: number,appURL: string, userName: string,id: string }) {
   const [showWindow, setShowWindow] = useState(false);
-  const [formUserName, setFormUserName] = useState("");
+  const [newPostContent, setNewPostContent] = useState("");
   if (showWindow === false) {
     return (
       <>
-        <div
-          className="flex items-center space-x-2 hover:bg-gray-700 p-2 rounded-md cursor-pointer"
+        <button
+          className="flex items-center space-x-2 text-gray-400 hover:text-blue-500"
           onClick={() => {
             setShowWindow(true);
           }}
         >
-          <span>🔑</span>
-          <span>ユーザーネームを設定</span>
-        </div>
+          <span>💬</span>
+          <span>{comment}</span>
+        </button>
       </>
     );
   }
@@ -39,34 +35,33 @@ function Login(
             className="h-full px-2 lg:px-3 flex flex-col"
             onSubmit={async (e) => {
               e.preventDefault();
-              setUserName(formUserName);
-              setShowWindow(false);
-              alert("ユーザーネームを" + formUserName + "に設定しました。");
+              await fetch(appURL + "/api/tweet/post", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  text: newPostContent,
+                  type: "comment",
+                  userName: userName,
+                  comentedTweet: id,
+                }),
+              });
             }}
           >
             <div className="text-sm">
               <p className="text-black dark:text-white font-bold text-3xl mt-4 mb-5">
-                ユーザーネームを設定
+                ツイート
               </p>
             </div>
             <div className="flex flex-col">
-              <label className="block mb-2 text-sm font-medium text-black dark:text-white">
-                ユーザーネーム
-              </label>
               <div className="w-full mb-2">
-                <input
-                  className="bg-[#1f2937] border border-[rgba(0,0,0,5%)] shadow-[0_0.5px_1.5px_rgba(0,0,0,30%),0_0_0_0_rgba(0,122,255,50%)] focus:shadow-[0_0.5px_1.5px_rgba(0,0,0,30%),0_0_0_3px_rgba(0,122,255,50%)] text-white text-sm rounded-lg focus:ring-2 ring-1 ring-[rgba(0,0,0,5%)] outline-none block w-full p-2.5"
-                  onChange={(e) => {
-                    if (!e.target) {
-                      return;
-                    }
-                    const target = e.target as HTMLInputElement;
-                    setFormUserName(target.value);
-                  }}
-                  placeholder={"username"}
-                  type={"text"}
-                  value={formUserName}
-                />
+                <textarea
+                  value={newPostContent}
+                  onChange={(e) => setNewPostContent(e.target.value)}
+                  className="bg-[#1f2937] border border-[rgba(0,0,0,5%)] shadow-[0_0.5px_1.5px_rgba(0,0,0,30%),0_0_0_0_rgba(0,122,255,50%)] focus:shadow-[0_0.5px_1.5px_rgba(0,0,0,30%),0_0_0_3px_rgba(0,122,255,50%)] text-white text-sm rounded-lg focus:ring-2 ring-1 ring-[rgba(0,0,0,5%)] outline-none block w-full h-full p-2.5"
+                >
+                </textarea>
               </div>
             </div>
             <div className="flex justify-end w-full pt-2 gap-1">
@@ -80,15 +75,13 @@ function Login(
           </form>
         </div>
       </div>
-      <div
-        className="flex items-center space-x-2 hover:bg-gray-700 p-2 rounded-md cursor-pointer"
-        onClick={() => {
-          setShowWindow(true);
-        }}
+      <button
+        className="flex items-center space-x-2 text-gray-400 hover:text-blue-500"
+        onClick={() => {}}
       >
-        <span>🔑</span>
-        <span>ユーザーネームを設定</span>
-      </div>
+        <span>💬</span>
+        <span>{comment}</span>
+      </button>
     </>
   );
 }

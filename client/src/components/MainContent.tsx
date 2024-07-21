@@ -1,51 +1,91 @@
 import { useState } from "react";
 import Post from "./Post.tsx";
 
-
-const MainContent = ({posts, setPosts}) => {
-
+const MainContent = (
+  { posts, setPosts, userName, appURL, page, setPage }: {
+    posts: any;
+    setPosts: React.Dispatch<React.SetStateAction<any>>;
+    userName: string;
+    appURL: string;
+    setPage: React.Dispatch<React.SetStateAction<string>>;
+    page: string;
+  },
+) => {
   const [newPostContent, setNewPostContent] = useState("");
 
-  const handlePostTweet = () => {
+  const handlePostTweet = async () => {
     if (newPostContent.trim()) {
-      const newPost = {
-        username: "YourUsername", // Replace with dynamic username if needed
-        handle: "YourHandle", // Replace with dynamic handle if needed
-        time: "今", // This should dynamically show the time
-        content: newPostContent,
-      };
-      setPosts([newPost, ...posts]);
+      if (userName === "") {
+        alert("ユーザーネームを設定してください。");
+        return;
+      }
+      await fetch(appURL + "/api/tweet/post", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          text: newPostContent,
+          type: "tweet",
+          userName: userName,
+        }),
+      });
+      await fetch(appURL + "/api/tweet/get", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ limit: 15 }),
+      })
+        .then((res) => res.json())
+        .then((data) => setPosts(data.data));
       setNewPostContent("");
     }
   };
-  return (
-    <div className="flex-grow h-screen bg-gray-800 text-white p-4">
-      <div className="mb-4 bg-gray-700 p-4 rounded-md">
-        <textarea
-          className="w-full bg-gray-800 p-2 rounded-md text-white"
-          placeholder="今何してる？"
-          value={newPostContent}
-          onChange={(e) => setNewPostContent(e.target.value)}
-        />
-        <button
-          className="mt-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-          onClick={handlePostTweet}
-        >
-          ツイート
-        </button>
+  if (page === "home") {
+    return (
+      <div className="flex-grow h-screen bg-gray-800 text-white p-4 overflow-hidden">
+        <div className="h-full overflow-y-auto hidden-scrollbar">
+          <div className="mb-4 bg-gray-700 p-4 rounded-md">
+            <textarea
+              className="w-full bg-gray-800 p-2 rounded-md text-white"
+              placeholder="今何してる？"
+              value={newPostContent}
+              onChange={(e) => setNewPostContent(e.target.value)}
+            />
+            <button
+              className="mt-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+              onClick={handlePostTweet}
+            >
+              ツイート
+            </button>
+          </div>
+          <div className="space-y-4">
+            {posts.map((post: any, index: number) => (
+              <Post
+                key={index}
+                username={post.username}
+                time={post.time}
+                content={post.content}
+                id={post.id}
+                like={post.like}
+                comment={post.comment}
+                appURL={appURL}
+              />
+            ))}
+          </div>
+        </div>
       </div>
-      <div className="space-y-4">
-        {posts.map((post) => (
-          <Post
-            username={post.username}
-            time={post.time}
-            content={post.content}
-            id={post.id}
-          />
-        ))}
+    );
+  }
+  if (page === "comment") {
+    return (
+      <div className="flex-grow h-screen bg-gray-800 text-white p-4 overflow-hidden">
+        <div className="h-full overflow-y-auto hidden-scrollbar">
+        </div>
       </div>
-    </div>
-  );
+    );
+  }
 };
 
 export default MainContent;

@@ -36,15 +36,18 @@ export function generateTimeline(posts: any[], limit?: number) {
   // ランダム化要素を追加
   const randomizedPosts = addRandomness(scoredPosts);
   const fmt = randomizedPosts.map((post) => ({
-    username: post.userName,
-    time: post.timestamp,
-    content: post.text,
+    username: post._doc.userName,
+    time: post._doc.timestamp,
+    content: post._doc.text,
     score: post.score,
+    id: post._doc._id,
+    like: post._doc.likes,
+    comment: post._doc.comments.length,
   }));
   // スコアに基づいて投稿をソート（降順）
   const sortedPosts = fmt.sort((a, b) => b.score - a.score);
 
-  if(limit) {
+  if (limit) {
     return sortedPosts.slice(0, limit);
   }
   return sortedPosts;

@@ -1,15 +1,14 @@
 import Sidebar from "./components/Sidebar.jsx";
 import MainContent from "./components/MainContent.jsx";
 import RightSidebar from "./components/RightSidebar.jsx";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const appURL = "http://localhost:8000";
 
 function App() {
   const [posts, setPosts] = useState([]);
-  const [ userName, setUserName ] = useState("");
-  const [ page, setPage ] = useState("home");
-  const [ isLogin, setIsLogin ] = useState(false);
+  const [userName, setUserName] = useState("");
+  const [page, setPage] = useState("home");
   useEffect(() => {
     async function fetchData() {
       const res = await fetch(`${appURL}/api/tweet/get`, {
@@ -20,7 +19,6 @@ function App() {
         body: JSON.stringify({ limit: 15 }),
       });
       const data = await res.json();
-      console.log(data);
       setPosts(data.data);
     }
     fetchData();
@@ -30,8 +28,15 @@ function App() {
       <div>
       </div>
       <div className="flex">
-        <Sidebar userName={userName} setUserName={setUserName} />
-        <MainContent posts={posts} setPosts={setPosts} />
+        <Sidebar setUserName={setUserName} />
+        <MainContent
+          posts={posts}
+          setPosts={setPosts}
+          userName={userName}
+          appURL={appURL}
+          page={page}
+          setPage={setPage}
+        />
         <RightSidebar />
       </div>
     </>

@@ -3,28 +3,32 @@ import mongoose from "mongoose";
 import Tweet from "./models/tweets.ts";
 import { generateTimeline } from "./mod.ts";
 import { prettyJSON } from "hono/pretty-json";
-import { cors } from 'hono/cors'
+import { cors } from "hono/cors";
 
-const MONGO_URL = Deno.env.get("MONGO_URL") || "mongodb://localhost:27017/Tweet";
+const MONGO_URL = Deno.env.get("MONGO_URL") ||
+  "mongodb://localhost:27017/Tweet";
 mongoose.connect(MONGO_URL);
 
 const app = new Hono();
 
-app.use('*', prettyJSON());
-app.use('/api/*', cors(
-  {
-    origin: '*',
-    allowMethods: ['POST', 'GET', 'OPTIONS'],
-  }
-));
+app.use("*", prettyJSON());
+app.use(
+  "/api/*",
+  cors(
+    {
+      origin: "*",
+      allowMethods: ["POST", "GET", "OPTIONS"],
+    },
+  ),
+);
 app.post("/api/tweet/get", async (c) => {
-  let data
+  let data;
   try {
     data = await c.req.json();
-    if(data.limit === undefined) {
+    if (data.limit === undefined) {
       data.limit = 15;
     }
-    if(data.skip === undefined) {
+    if (data.skip === undefined) {
       data.skip = {};
     }
   } catch (e) {
@@ -60,7 +64,7 @@ app.post("/api/tweet/post", async (c) => {
   if (userName.length === 0 || userName.length > 20) {
     return c.json({ error: "Invalid username" });
   }
-  if(type === "coment") {
+  if (type === "coment") {
     const isTweetExist = await Tweet.findOne({ _id: data.comentedTweet });
     if (!isTweetExist) {
       return c.json({ error: "Tweet does not exist" });
@@ -70,33 +74,34 @@ app.post("/api/tweet/post", async (c) => {
       type,
       comentedTweet: data.comentedTweet,
       userName,
-    })
+    });
     await Tweet.updateOne({ _id: data.comentedTweet }, { $push: result._id });
     return c.json({ status: true } as { status: boolean });
   }
-  if(type === "tweet") {
+  if (type === "tweet") {
     await Tweet.create({
       text,
       type,
       userName,
     });
-    return c.json({ status: true});
+    return c.json({ status: true });
   }
 });
 app.post("/api/tweet/like", async (c) => {
   const data = await c.req.json();
-  const { tweetId,} = data;
-  const tweet = await Tweet.findOne({ _id: tweetId });
+  const { id } = data;
+  const tweet = await Tweet.findOne({ _id: id });
   if (!tweet) {
     return c.json({ error: "Tweet does not exist" });
   }
-  await Tweet.updateOne({ _id: tweetId }, { $inc: { likes: 1 } });
+  await Tweet.updateOne({ _id: id }, { $inc: { likes: 1 } });
   return c.json({ status: true });
-})
+});
+
 app.post("/api/tweet/getComments", async (c) => {
   const data = await c.req.json();
-  const { tweetId } = data;
-  const tweet = await Tweet.findOne({ _id: tweetId });
+  const { id } = data;
+  const tweet = await Tweet.findOne({ _id: id });
   if (!tweet) {
     return c.json({ error: "Tweet does not exist" });
   }
@@ -104,7 +109,7 @@ app.post("/api/tweet/getComments", async (c) => {
   const comenntsData = await Promise.all(comments.map(async (commentId) => {
     const comment = await Tweet.findOne({ _id: commentId });
     return comment;
-  }))
+  }));
   generateTimeline(comenntsData);
   return c.json({ status: true });
 });
