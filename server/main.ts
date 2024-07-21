@@ -4,7 +4,7 @@ import Tweet from "./models/tweets.ts";
 import { generateTimeline } from "./mod.ts";
 import { prettyJSON } from "hono/pretty-json";
 import { cors } from "hono/cors";
-
+import TinySegmenter from "tiny-segmenter";
 const MONGO_URL = Deno.env.get("MONGO_URL") ||
   "mongodb://localhost:27017/Tweet";
 mongoose.connect(MONGO_URL);
@@ -116,10 +116,57 @@ app.post("/api/tweet/getComments", async (c) => {
   const result = generateTimeline(comenntsData);
   return c.json({ status: true, data: result });
 });
-Deno.serve(app.fetch);
 
+//tweetの検索 limitを指定できるようにする
+app.post("/api/tweet/search", async (c) => {
+  const data = await c.req.json();
+  const { query, limit } = data;
+  if (typeof query !== "string") {
+    return c.json({ error: "Invalid query" });
+  }
+  const tweets = await Tweet.find({ text: { $regex: query } }).limit(limit);
+  const result = generateTimeline(tweets);
+  return c.json({ status: true, data: result });
+});
 
+/*ーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーー */
+/*ーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーー */
+/*ーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーー */
+/*ーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーー */
+/*ーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーー */
+const stopwords = new Set([
+  "は",
+  "が",
+  "に",
+  "を",
+  "の",
+  "と",
+  "で",
+  "や",
+  "など",
+  "も",
+  "へ",
+  "から",
+  "まで",
+  "より",
+  "か",
+  "し",
+  "な",
+  "だ",
+  "です",
+  "ます",
+  "ある",
+  "いる",
+  "する",
+  "なる",
+  "できる",
+  "くる",
+  "いく",
+]);
 
+const segmenter = new TinySegmenter();
+
+// 投稿データの型
 interface Post {
   text: string;
   likes: number;
@@ -127,30 +174,46 @@ interface Post {
   timestamp: string | number | Date;
 }
 
+// キーワード抽出とストップワードの除去
+function extractKeywords(text: string): string[] {
+  const tokens = segmenter.segment(text);
+  const words = tokens.filter((word) =>
+    !stopwords.has(word) && word.length > 1
+  );
+  return words;
+}
+
 // キーワード頻度計算
-function calculateKeywordFrequency(posts: Post[]): { [key: string]: number } {
+async function calculateKeywordFrequency(
+  posts: Post[],
+): Promise<{ [key: string]: number }> {
   const keywordFrequency: { [key: string]: number } = {};
 
-  posts.forEach((post) => {
-    const words = post.text.split(/\s+/);
-    words.forEach((word) => {
-      if (keywordFrequency[word]) {
-        keywordFrequency[word]++;
+  for (const post of posts) {
+    const keywords = extractKeywords(post.text);
+    keywords.forEach((keyword) => {
+      if (keywordFrequency[keyword]) {
+        keywordFrequency[keyword]++;
       } else {
-        keywordFrequency[word] = 1;
+        keywordFrequency[keyword] = 1;
       }
     });
-  });
+  }
 
   return keywordFrequency;
 }
 
 // トレンド計算
-function calculateTrends(posts: Post[], limit: number = 10): { keyword: string, score: number }[] {
-  const keywordFrequency = calculateKeywordFrequency(posts);
+async function calculateTrends(
+  posts: Post[],
+  limit: number = 10,
+): Promise<{ keyword: string; score: number }[]> {
+  const keywordFrequency = await calculateKeywordFrequency(posts);
 
   // トレンドスコアを計算
-  const trends = Object.entries(keywordFrequency).map(([keyword, frequency]) => ({
+  const trends = Object.entries(keywordFrequency).map((
+    [keyword, frequency],
+  ) => ({
     keyword,
     score: frequency,
   }));
@@ -172,7 +235,9 @@ app.post("/api/trends", async (c) => {
   const posts = await Tweet.find().sort({ timestamp: -1 }).limit(100).exec();
 
   // トレンドを計算
-  const trends = calculateTrends(posts, data.limit || 10);
+  const trends = await calculateTrends(posts, data.limit || 10);
 
   return c.json({ status: true, data: trends });
 });
+
+Deno.serve(app.fetch);

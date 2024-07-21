@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Post from "./Post.tsx";
 import SelectPost from "./SelectPost.tsx";
 const MainContent = (
@@ -30,6 +30,25 @@ const MainContent = (
 ) => {
   const [newPostContent, setNewPostContent] = useState("");
   const [newCommentContent, setNewCommentContent] = useState("");
+  const [trends, setTrends] = useState([]);
+  const [searchPage, setSearchPage] = useState("trend");
+  const [seachResult, setSearchResult] = useState([]);
+  const [searchWord, setSearchWord] = useState("");
+  useEffect(() => {
+    fetch(appURL + "/api/trends", {
+      method: "POST",
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        setTrends(data.data);
+      });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  useEffect(() => {
+    setSearchWord("");
+    setSearchResult([]);
+    setSearchPage("trend");
+  },[page]);
   const handlePostTweet = async () => {
     if (newPostContent.trim()) {
       if (userName === "") {
@@ -99,14 +118,74 @@ const MainContent = (
         <div className="h-full overflow-y-auto hidden-scrollbar">
           {/* 検索フォーム */}
           <div className="mb-4 bg-gray-800 p-2 rounded-md flex">
-            <input
-              className="w-full bg-gray-900 p-4 rounded-md text-white"
-              placeholder="検索"
-            />
+            <form className="w-full"
+            onSubmit={async (e) => {
+              e.preventDefault();
+              //query, limit
+              const res = await fetch(appURL + "/api/tweet/search", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  query: searchWord,
+                  limit: 25,
+                }),
+              });
+              const data = await res.json();
+              setSearchResult(data.data);
+              setSearchPage("search");
+            }}
+            >
+              <input
+                className="w-full bg-gray-900 p-4 rounded-md text-white"
+                placeholder="検索"
+                value={searchWord}
+                onChange={(e) => setSearchWord(e.target.value)}
+              />
+            </form>
             <div>
             </div>
           </div>
-          <h2 className="text-xl pl-2">トレンド</h2>
+          {/*serchPageがtrendの場合 */}
+          {searchPage === "trend" && (
+            <>
+              <h2 className="text-xl pl-2">トレンド</h2>
+              <p className="text-gray-200 pl-2">
+                ※精度やばいけど許してください。実装難しかった
+              </p>
+              {trends.map((trend: any, index: number) => (
+                <div
+                  key={index}
+                  className="bg-gray-700 p-4 rounded-md mb-4 hover:bg-gray-600"
+                >
+                  <div className="py-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-white">
+                        {trend.keyword}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </>
+          )}
+          {/*serchPageがsearchの場合 */}
+          {searchPage === "search" && (
+            <>
+              <h2 className="text-xl pl-2">検索結果</h2>
+              {seachResult.map((post: any, index: number) => (
+                <Post
+                  key={index}
+                  postInfo={post}
+                  appURL={appURL}
+                  setPage={setPage}
+                  setCommentPost={setCommentPost}
+                  setSelectPost={setSelectPost}
+                />
+              ))}
+            </>
+          )}
         </div>
       </div>
     );

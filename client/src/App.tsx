@@ -43,7 +43,9 @@ function App() {
           selectPost={selectPost}
           setSelectPost={setSelectPost}
         />
-        <RightSidebar />
+        <RightSidebar
+          appURL={appURL}
+        />
       </div>
     </>
   );

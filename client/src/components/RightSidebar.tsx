@@ -1,27 +1,38 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import TrendingTopic from "./TrendingTopic.tsx";
-
-const RightSidebar = () => {
-  const trendingTopics = [
-    { topic: "トレンド", description: "ドーピング、厳重注意" },
-    { topic: "トレンド", description: "選挙" },
-    { topic: "トレンド", description: "鉄道完売" },
-    // Add more topics as needed
-  ];
+import { useEffect, useState } from "react";
+const RightSidebar = ({ appURL }) => {
+  interface Trend {
+    keyword: string;
+    score: number;
+  }
+  const [trends, setTrends] = useState<Trend[]>([]);
+  useEffect(() => {
+    fetch(appURL + "/api/trends", {
+      method: "POST",
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        setTrends(data.data);
+      });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className="w-[450px] h-screen bg-gray-900 text-white p-4 flex flex-col">
       <div className="mt-4  flex-1">
         <div className="bg-gray-800 p-4 rounded-md">
           <h2 className="text-xl mb-2">今はどうしてる？</h2>
-          {trendingTopics.map((topic, index) => (
-            <TrendingTopic
-              key={index}
-              topic={topic.topic}
-              description={topic.description}
-            />
-          ))}
+          {trends.map((topic, index) => {
+            return (
+              <TrendingTopic
+                key={index}
+                topic={"トレンド"}
+                description={topic.keyword}
+              />
+            );
+          })}
         </div>
       </div>
       <div className="mt-auto">

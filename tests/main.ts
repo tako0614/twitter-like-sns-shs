@@ -50,4 +50,4 @@ async function getTrend() {
   const data = await res.json();
   console.log(data);
 }
-getTrend()
+getTrend();
