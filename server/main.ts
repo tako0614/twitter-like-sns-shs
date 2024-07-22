@@ -104,7 +104,7 @@ app.post("/api/tweet/getComments", async (c) => {
   const { id } = data;
   const tweet = await Tweet.findOne({ _id: id });
   if (!tweet) {
-    return c.json({ error: "Tweet does not exist" });
+    return c.json({ error: "Tweet does not exist", data: [] });
   }
   const comments = tweet.comments;
   const comenntsData = await Promise.all(comments.map(async (commentId) => {

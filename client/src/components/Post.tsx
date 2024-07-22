@@ -39,6 +39,7 @@ const Post = (
             },
           );
           const data = await res.json();
+          console.log(data,postInfo );
           setCommentPost(data.data);
           setPage("comment");
           setSelectPost(postInfo);
