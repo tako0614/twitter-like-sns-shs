@@ -24,8 +24,17 @@ async function getTweets() {
   const data = await res.json();
   console.log(data);
 }
-
-//200回Tweet(); forで
-for (let i = 0; i < 200; i++) {
-  await Tweet();
+async function getComments() {
+  const res = await fetch("hhttp://localhost:8000/api/tweet/getComments", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      id: "669e432731de1e9e91c90d48",
+    }),
+  });
+  const data = await res.json();
+  console.log(data);
 }
+getComments();

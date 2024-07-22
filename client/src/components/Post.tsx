@@ -27,7 +27,7 @@ const Post = (
       <div
         onClick={async () => {
           const res = await fetch(
-            "http://localhost:8000/api/tweet/getComments",
+            appURL + "/api/tweet/getComments",
             {
               method: "POST",
               headers: {

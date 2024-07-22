@@ -13,7 +13,7 @@ const app = new Hono();
 
 app.use("*", prettyJSON());
 app.use(
-  "/api/*",
+  "/*",
   cors(
     {
       origin: "*",
@@ -21,7 +21,12 @@ app.use(
     },
   ),
 );
-app.post("/api/tweet/get", async (c) => {
+const PASSWORD = "password";
+app.post("/:password/api/tweet/get", async (c) => {
+  const { password } = c.req.param();
+  if (password !== PASSWORD) {
+    return c.json({ error: "Invalid password" });
+  }
   let data;
   try {
     data = await c.req.json();
@@ -46,7 +51,11 @@ app.post("/api/tweet/get", async (c) => {
   return c.json(result);
 });
 
-app.post("/api/tweet/post", async (c) => {
+app.post("/:password/api/tweet/post", async (c) => {
+  const { password } = c.req.param();
+  if (password !== PASSWORD) {
+    return c.json({ error: "Invalid password" });
+  }
   const data = await c.req.json();
   const { text, type, userName } = data;
   if (
@@ -88,7 +97,11 @@ app.post("/api/tweet/post", async (c) => {
     return c.json({ status: true });
   }
 });
-app.post("/api/tweet/like", async (c) => {
+app.post("/:password/api/tweet/like", async (c) => {
+  const { password } = c.req.param();
+  if (password !== PASSWORD) {
+    return c.json({ error: "Invalid password" });
+  }
   const data = await c.req.json();
   const { id } = data;
   const tweet = await Tweet.findOne({ _id: id });
@@ -99,7 +112,11 @@ app.post("/api/tweet/like", async (c) => {
   return c.json({ status: true });
 });
 
-app.post("/api/tweet/getComments", async (c) => {
+app.post("/:password/api/tweet/getComments", async (c) => {
+  const { password } = c.req.param();
+  if (password !== PASSWORD) {
+    return c.json({ error: "Invalid password" });
+  }
   const data = await c.req.json();
   const { id } = data;
   const tweet = await Tweet.findOne({ _id: id });
@@ -117,7 +134,11 @@ app.post("/api/tweet/getComments", async (c) => {
 });
 
 //tweetの検索 limitを指定できるようにする
-app.post("/api/tweet/search", async (c) => {
+app.post("/:password/api/tweet/search", async (c) => {
+  const { password } = c.req.param();
+  if (password !== PASSWORD) {
+    return c.json({ error: "Invalid password" });
+  }
   const data = await c.req.json();
   const { query, limit } = data;
   if (typeof query !== "string") {
@@ -232,7 +253,11 @@ async function calculateTrends(
 }
 
 // トレンドAPIエンドポイント
-app.post("/api/trends", async (c) => {
+app.post("/:password/api/trends", async (c) => {
+  const { password } = c.req.param();
+  if (password !== PASSWORD) {
+    return c.json({ error: "Invalid password" });
+  }
   let data: { limit?: number };
   try {
     data = await c.req.json();
