@@ -3,7 +3,7 @@ import MainContent from "./components/MainContent.jsx";
 import RightSidebar from "./components/RightSidebar.jsx";
 import { useEffect, useState } from "react";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const appURL = "http://localhost:8000";
+const appURL = "https://shimizudanitter.takos.jp";
 
 function App() {
   const [posts, setPosts] = useState([]);

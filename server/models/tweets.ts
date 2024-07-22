@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import { Timestamp } from "../../../../../AppData/Local/deno/npm/registry.npmjs.org/mongodb/6.7.0/mongodb.d.ts";
 const tweetSchema = new mongoose.Schema({
   text: {
     type: String,
