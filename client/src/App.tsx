@@ -18,7 +18,7 @@ function App() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ limit: 15 }),
+        body: JSON.stringify({ limit: 400 }),
       });
       const data = await res.json();
       setPosts(data.data);

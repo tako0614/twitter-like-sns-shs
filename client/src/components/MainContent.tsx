@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import Post from "./Post.tsx";
 import SelectPost from "./SelectPost.tsx";
+import InfiniteScroll  from "react-infinite-scroller"
+const loader =<div className="loader" key={0}>Loading ...</div>;
 const MainContent = (
   {
     posts,

@@ -26,18 +26,18 @@ app.post("/api/tweet/get", async (c) => {
   try {
     data = await c.req.json();
     if (data.limit === undefined) {
-      data.limit = 15;
+      data.limit = 100;
     }
     if (data.skip === undefined) {
-      data.skip = {};
+      data.skip = [];
     }
   } catch (e) {
     data = {
-      limit: 15,
-      skip: {},
+      limit: 100,
+      skip: [],
     };
   }
-  const tweets = await Tweet.find({ type: { $ne: "comment" } }).skip(data.skip);
+  const tweets = await Tweet.find({ type: { $ne: "comment" }, _id: { $nin: data.skip } });
   const timeline = generateTimeline(tweets, data.limit);
   const result = {
     status: true,
@@ -160,6 +160,16 @@ const stopwords = new Set([
   "できる",
   "くる",
   "いく",
+  "られる",
+  "れる",
+  "さ",
+  "よう",
+  "そう",
+  "これ",
+  "それ",
+  "あれ",
+  "この",
+  "その",
 ]);
 
 const segmenter = new TinySegmenter();
