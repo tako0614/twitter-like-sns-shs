@@ -3,8 +3,8 @@
 import { useEffect, useState } from "react";
 import Post from "./Post.tsx";
 import SelectPost from "./SelectPost.tsx";
-import InfiniteScroll  from "react-infinite-scroller"
-const loader =<div className="loader" key={0}>Loading ...</div>;
+import InfiniteScroll from "react-infinite-scroller";
+const loader = <div className="loader" key={0}>Loading ...</div>;
 const MainContent = (
   {
     posts,
@@ -50,14 +50,14 @@ const MainContent = (
     setSearchWord("");
     setSearchResult([]);
     setSearchPage("trend");
-  },[page]);
+  }, [page]);
   const handlePostTweet = async () => {
     if (newPostContent.trim()) {
       if (userName === "") {
         alert("ユーザーネームを設定してください。");
         return;
       }
-      if(newPostContent.trim() === ""){
+      if (newPostContent.trim() === "") {
         alert("何か入力してください");
         return;
       }
@@ -95,6 +95,9 @@ const MainContent = (
               placeholder="今何してる？"
               value={newPostContent}
               onChange={(e) => setNewPostContent(e.target.value)}
+              style={{
+                height: `${newPostContent.split("\n").length * 24 + 36}px`,
+              }}
             />
             <button
               className="mt-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
@@ -125,24 +128,25 @@ const MainContent = (
         <div className="h-full overflow-y-auto hidden-scrollbar">
           {/* 検索フォーム */}
           <div className="mb-4 bg-gray-800 p-2 rounded-md flex">
-            <form className="w-full"
-            onSubmit={async (e) => {
-              e.preventDefault();
-              //query, limit
-              const res = await fetch(appURL + "/api/tweet/search", {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                  query: searchWord,
-                  limit: 25,
-                }),
-              });
-              const data = await res.json();
-              setSearchResult(data.data);
-              setSearchPage("search");
-            }}
+            <form
+              className="w-full"
+              onSubmit={async (e) => {
+                e.preventDefault();
+                //query, limit
+                const res = await fetch(appURL + "/api/tweet/search", {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify({
+                    query: searchWord,
+                    limit: 25,
+                  }),
+                });
+                const data = await res.json();
+                setSearchResult(data.data);
+                setSearchPage("search");
+              }}
             >
               <input
                 className="w-full bg-gray-900 p-4 rounded-md text-white"
@@ -241,7 +245,7 @@ const MainContent = (
                   alert("ユーザーネームを設定してください。");
                   return;
                 }
-                if(newCommentContent.trim() === ""){
+                if (newCommentContent.trim() === "") {
                   alert("何か入力してください");
                   return;
                 }

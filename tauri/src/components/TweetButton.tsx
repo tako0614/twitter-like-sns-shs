@@ -1,4 +1,9 @@
 import { useState } from "react";
+const postFormLength = (newPostContent) => {
+  const n = newPostContent.split("\n").length;
+  if (n > 6) return 6 * 24 + 36;
+  return n * 24 + 36;
+}
 function Login() {
   const [showWindow, setShowWindow] = useState(false);
   const [newPostContent, setNewPostContent] = useState("");
@@ -47,7 +52,11 @@ function Login() {
                 <textarea
                   value={newPostContent}
                   onChange={(e) => setNewPostContent(e.target.value)}
-                  className="bg-[#1f2937] border border-[rgba(0,0,0,5%)] shadow-[0_0.5px_1.5px_rgba(0,0,0,30%),0_0_0_0_rgba(0,122,255,50%)] focus:shadow-[0_0.5px_1.5px_rgba(0,0,0,30%),0_0_0_3px_rgba(0,122,255,50%)] text-white text-sm rounded-lg focus:ring-2 ring-1 ring-[rgba(0,0,0,5%)] outline-none block w-full h-full p-2.5"
+                  className="w-full bg-gray-800 p-2 rounded-md text-white"
+                  placeholder="今何してる？"
+                  style={{
+                    height: `${postFormLength(newPostContent)}px`,
+                  }}
                 >
                 </textarea>
               </div>
@@ -57,7 +66,7 @@ function Login() {
                 type="submit"
                 className="rounded-lg text-white bg-[#007AFF] ring-1 ring-[rgba(0,122,255,12%)] shadow-[0_1px_2.5px_rgba(0,122,255,24%)] px-5 py-2 hover:bg-[#1f7adb] focus:outline-none disabled:bg-gray-300 disabled:dark:bg-gray-700"
               >
-                {"設定！"}
+                {"ツイート"}
               </button>
             </div>
           </form>

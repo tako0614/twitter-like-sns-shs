@@ -1,42 +1,73 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import TrendingTopic from "./TrendingTopic.tsx";
-import { useEffect, useState } from "react";
-const RightSidebar = ({ appURL }) => {
-  interface Trend {
-    keyword: string;
-    score: number;
-  }
+/**
+ * 右サイドバーコンポーネント
+ * トレンドキーワードを表示
+ */
+
+import { useEffect, useState } from 'react';
+import TrendingTopic from './TrendingTopic';
+import { api } from '../api/client';
+import type { Trend } from '../types';
+
+/**
+ * 右サイドバー
+ * トレンドキーワード一覧とGitHubリンクを表示
+ */
+const RightSidebar = () => {
   const [trends, setTrends] = useState<Trend[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // トレンドを取得
   useEffect(() => {
-    fetch(appURL + "/api/trends", {
-      method: "POST",
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        setTrends(data.data);
-      });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const fetchTrends = async () => {
+      try {
+        const data = await api.getTrends();
+        setTrends(data);
+      } catch (error) {
+        console.error('トレンドの取得に失敗しました:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchTrends();
   }, []);
 
   return (
     <div className="w-[450px] h-screen bg-gray-900 text-white p-4 flex flex-col">
-      <div className="mt-4  flex-1">
+      {/* トレンドセクション */}
+      <div className="mt-4 flex-1">
         <div className="bg-gray-800 p-4 rounded-md">
           <h2 className="text-xl mb-2">今はどうしてる？</h2>
-          {trends.map((topic, index) => {
-            return (
-              <TrendingTopic
-                key={index}
-                topic={"トレンド"}
-                description={topic.keyword}
-              />
-            );
-          })}
+
+          {/* ローディング表示 */}
+          {isLoading && (
+            <p className="text-gray-400 text-sm">読み込み中...</p>
+          )}
+
+          {/* トレンド一覧 */}
+          {!isLoading && trends.length === 0 && (
+            <p className="text-gray-400 text-sm">トレンドがありません</p>
+          )}
+
+          {!isLoading && trends.map((topic, index) => (
+            <TrendingTopic
+              key={index}
+              topic="トレンド"
+              description={topic.keyword}
+            />
+          ))}
         </div>
       </div>
+
+      {/* フッター */}
       <div className="mt-auto">
-        <p className="text-center">github</p>
+        <a
+          href="https://github.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="block text-center bg-blue-500 hover:bg-blue-600 transition-colors py-2 rounded"
+        >
+          GitHub
+        </a>
       </div>
     </div>
   );

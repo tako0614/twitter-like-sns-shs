@@ -74,7 +74,7 @@ function Login(
               alert("返信しました");
               setNewPostContent("");
               setShowWindow(false);
-              if(isComment) {
+              if (isComment) {
                 const res = await fetch(appURL + "/api/tweet/getComments", {
                   method: "POST",
                   headers: {

@@ -39,7 +39,7 @@ const Post = (
             },
           );
           const data = await res.json();
-          console.log(data,postInfo );
+          console.log(data, postInfo);
           setCommentPost(data.data);
           setPage("comment");
           setSelectPost(postInfo);
@@ -48,10 +48,10 @@ const Post = (
       >
         <div className="flex items-center justify-between">
           <span className="text-sm text-gray-400">
-            {postInfo.username} {postInfo.time}
+            {postInfo.username} {convertTime(postInfo.time)}
           </span>
         </div>
-        <p className="mt-2">{postInfo.content}</p>
+        <p className="mt-2">{convertLineBreak(postInfo.content)}</p>
       </div>
       <div className="flex items-center justify-start space-x-4 mt-4">
         <CommentButton
@@ -91,3 +91,27 @@ const Post = (
 };
 
 export default Post;
+
+function convertTime(time: string | number | Date) {
+  const date = new Date(time);
+  const year = date.getFullYear();
+  const month = date.getMonth() + 1;
+  const day = date.getDate();
+  const hours = date.getHours();
+  const minutes = date.getMinutes();
+  const ampm = hours >= 12 ? "午後" : "午前";
+  const hour = hours % 12;
+  const zeroPaddingHour = hour === 0 ? 12 : hour;
+  const zeroPaddingMinutes = String(minutes).padStart(2, "0");
+  return `${year}年${month}月${day}日 ${ampm} ${zeroPaddingHour}:${zeroPaddingMinutes}`;
+}
+//preactで動作する改行を反映させるために、改行コードをbrタグに変換する関数
+function convertLineBreak(message: string | null | undefined) {
+  if (message === null || message === undefined) return;
+  return message.split("\n").map((line, index) => (
+    <span key={index}>
+      {line}
+      <br />
+    </span>
+  ));
+}

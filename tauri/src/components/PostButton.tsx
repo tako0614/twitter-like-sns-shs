@@ -1,19 +1,25 @@
 import { useState } from "react";
+const postFormLength = (newPostContent) => {
+  const n = newPostContent.split("\n").length;
+  if (n > 6) return 6 * 24 + 36;
+  return n * 24 + 36;
+}
 function Login() {
   const [showWindow, setShowWindow] = useState(false);
   const [newPostContent, setNewPostContent] = useState("");
   if (showWindow === false) {
     return (
       <>
-        <div className="flex items-center justify-center h-16 border-t border-gray-700"
-        onClick={() => {
+        <div
+          className="flex items-center justify-center h-16 border-t border-gray-700"
+          onClick={() => {
             setShowWindow(true);
           }}
         >
-        <button className="bg-blue-500 px-4 py-2 rounded-full text-white">
-          ポストする
-        </button>
-      </div>
+          <button className="bg-blue-500 px-4 py-2 rounded-full text-white">
+            ポストする
+          </button>
+        </div>
       </>
     );
   }
@@ -47,8 +53,11 @@ function Login() {
                 <textarea
                   value={newPostContent}
                   onChange={(e) => setNewPostContent(e.target.value)}
-                  className="bg-[#1f2937] border border-[rgba(0,0,0,5%)] shadow-[0_0.5px_1.5px_rgba(0,0,0,30%),0_0_0_0_rgba(0,122,255,50%)] focus:shadow-[0_0.5px_1.5px_rgba(0,0,0,30%),0_0_0_3px_rgba(0,122,255,50%)] text-white text-sm rounded-lg focus:ring-2 ring-1 ring-[rgba(0,0,0,5%)] outline-none block w-full h-full p-2.5"
-                >
+                  className="w-full bg-gray-800 p-2 rounded-md text-white"
+                  placeholder="今何してる？"
+                  style={{
+                    height: `${postFormLength(newPostContent)}px`,
+                  }}>
                 </textarea>
               </div>
             </div>
@@ -63,11 +72,12 @@ function Login() {
           </form>
         </div>
       </div>
-      <div className="flex items-center justify-center h-16 border-t border-gray-700"
+      <div
+        className="flex items-center justify-center h-16 border-t border-gray-700"
         onClick={() => {
-            setShowWindow(true);
-          }}
-        >
+          setShowWindow(true);
+        }}
+      >
         <button className="bg-blue-500 px-4 py-2 rounded-full text-white">
           ポストする
         </button>

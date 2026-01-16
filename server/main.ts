@@ -42,7 +42,10 @@ app.post("/:password/api/tweet/get", async (c) => {
       skip: [],
     };
   }
-  const tweets = await Tweet.find({ type: { $ne: "comment" }, _id: { $nin: data.skip } });
+  const tweets = await Tweet.find({
+    type: { $ne: "comment" },
+    _id: { $nin: data.skip },
+  });
   const timeline = generateTimeline(tweets, data.limit);
   const result = {
     status: true,
@@ -208,7 +211,7 @@ interface Post {
 function extractKeywords(text: string): string[] {
   const tokens = segmenter.segment(text);
   const words = tokens.filter((word: string | any[]) =>
-    typeof word === 'string' && !stopwords.has(word) && word.length > 1
+    typeof word === "string" && !stopwords.has(word) && word.length > 1
   );
   return words;
 }

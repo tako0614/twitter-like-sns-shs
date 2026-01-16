@@ -36,7 +36,8 @@ const RightSidebar = ({ appURL }) => {
         </div>
       </div>
       <div className="mt-auto">
-        <p className="text-center">github</p>
+        
+        <a className="text-center bg-black p-2 rounded-xl mx-10 mb-4 block" href="https://github.com/tako0614" target="_blank">github</a>
       </div>
     </div>
   );

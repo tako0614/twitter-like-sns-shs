@@ -19,7 +19,8 @@ type PostProps = {
 };
 
 const Post = (
-  { postInfo, appURL, setPage, setCommentPost, setSelectPost,commentPost }: PostProps,
+  { postInfo, appURL, setPage, setCommentPost, setSelectPost, commentPost }:
+    PostProps,
 ) => {
   if (!postInfo) return <></>;
   // eslint-disable-next-line react-hooks/rules-of-hooks

@@ -582,6 +582,11 @@ video {
   z-index: 50;
 }
 
+.mx-10 {
+  margin-left: 2.5rem;
+  margin-right: 2.5rem;
+}
+
 .mb-2 {
   margin-bottom: 0.5rem;
 }
@@ -775,6 +780,11 @@ video {
   background-color: rgba(75,92,108,0);
 }
 
+.bg-black {
+  --tw-bg-opacity: 1;
+  background-color: rgb(0 0 0 / var(--tw-bg-opacity));
+}
+
 .bg-blue-500 {
   --tw-bg-opacity: 1;
   background-color: rgb(59 130 246 / var(--tw-bg-opacity));
@@ -955,6 +965,32 @@ video {
 .hidden-scrollbar::-webkit-scrollbar {
   /* Chrome, Safari 対応 */
   display: none;
+}
+
+.titlebar {
+  height: 30px;
+  background: #329ea3;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+          user-select: none;
+  display: flex;
+  justify-content: flex-end;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+}
+
+.titlebar-button {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  width: 30px;
+  height: 30px;
+}
+
+.titlebar-button:hover {
+  background: #5bbec3;
 }
 
 .hover\:bg-\[\#1f7adb\]:hover {
