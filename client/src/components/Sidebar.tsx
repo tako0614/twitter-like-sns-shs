@@ -1,17 +1,12 @@
 /**
  * 左サイドバーコンポーネント
  * ナビゲーションメニューとユーザー設定を提供
+ * 責務: ナビゲーションUIのみ
  */
 
 import SetUserNameButton from './SetUserNameButton';
+import { useAppContext } from '../contexts/AppContext';
 import type { PageType } from '../types';
-
-interface SidebarProps {
-  /** ユーザー名を設定する関数 */
-  setUserName: React.Dispatch<React.SetStateAction<string>>;
-  /** ページ遷移関数 */
-  setPage: (page: PageType) => void;
-}
 
 /** ナビゲーションアイテムの型 */
 interface NavItem {
@@ -30,7 +25,9 @@ const navItems: NavItem[] = [
  * サイドバー
  * アプリ名、ナビゲーション、ユーザー設定を表示
  */
-const Sidebar = ({ setUserName, setPage }: SidebarProps) => {
+const Sidebar = () => {
+  const { setPage, setUserName } = useAppContext();
+
   return (
     <div className="w-[450px] h-screen bg-gray-900 text-white flex flex-col">
       {/* ヘッダー：アプリ名 */}

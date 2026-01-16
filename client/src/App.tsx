@@ -1,34 +1,25 @@
 /**
  * メインアプリケーションコンポーネント
- * アプリケーション全体のレイアウトと状態管理を担当
+ * アプリケーション全体のレイアウトを担当
+ * 責務: レイアウトの組み立てのみ（状態管理はContextに委譲）
  */
 
 import { useEffect, useState } from 'react';
 import Sidebar from './components/Sidebar';
 import MainContent from './components/MainContent';
 import RightSidebar from './components/RightSidebar';
+import { AppProvider, useAppContext } from './contexts/AppContext';
 import { api } from './api/client';
-import type { PostInfo, PageType } from './types';
 
 /** 初回読み込み時の投稿取得件数 */
 const INITIAL_POSTS_LIMIT = 400;
 
 /**
- * Appコンポーネント
- * サイドバー、メインコンテンツ、右サイドバーを配置
+ * アプリケーションコンテンツ
+ * Providerの内側で使用
  */
-function App() {
-  // 投稿一覧
-  const [posts, setPosts] = useState<PostInfo[]>([]);
-  // ユーザー名（デフォルトは匿名）
-  const [userName, setUserName] = useState('匿名');
-  // 現在のページ
-  const [page, setPage] = useState<PageType>('home');
-  // コメント一覧（コメントページ用）
-  const [commentPost, setCommentPost] = useState<PostInfo[]>([]);
-  // 選択された投稿（コメントページ用）
-  const [selectPost, setSelectPost] = useState<PostInfo | null>(null);
-  // 読み込み中フラグ
+const AppContent = () => {
+  const { setPosts } = useAppContext();
   const [isLoading, setIsLoading] = useState(true);
 
   // 初回読み込み時に投稿を取得
@@ -44,7 +35,7 @@ function App() {
       }
     };
     fetchPosts();
-  }, []);
+  }, [setPosts]);
 
   // ローディング中の表示
   if (isLoading) {
@@ -57,25 +48,22 @@ function App() {
 
   return (
     <div className="flex">
-      {/* 左サイドバー：ナビゲーションとユーザー設定 */}
-      <Sidebar setUserName={setUserName} setPage={setPage} />
-
-      {/* メインコンテンツ：タイムライン、検索、コメント */}
-      <MainContent
-        posts={posts}
-        setPosts={setPosts}
-        userName={userName}
-        page={page}
-        setPage={setPage}
-        commentPost={commentPost}
-        setCommentPost={setCommentPost}
-        selectPost={selectPost}
-        setSelectPost={setSelectPost}
-      />
-
-      {/* 右サイドバー：トレンド表示 */}
+      <Sidebar />
+      <MainContent />
       <RightSidebar />
     </div>
+  );
+};
+
+/**
+ * Appコンポーネント
+ * AppProviderでラップしてグローバル状態を提供
+ */
+function App() {
+  return (
+    <AppProvider>
+      <AppContent />
+    </AppProvider>
   );
 }
 
